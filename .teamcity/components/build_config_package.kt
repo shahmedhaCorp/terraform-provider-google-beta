@@ -18,7 +18,7 @@ class packageDetails(name: String, displayName: String, environment: String, bra
             name = "%s - Acceptance Tests".format(displayName)
 
             vcs {
-                root(providerRepository)
+                root(ProviderRepository)
                 cleanCheckout = true
             }
 

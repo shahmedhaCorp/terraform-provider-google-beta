@@ -2,10 +2,10 @@
 
 import jetbrains.buildServer.configs.kotlin.vcs.GitVcsRoot
 
-// providerRepository is the config for a VCS root that's reused when defining the project and
+// ProviderRepository is the config for a VCS root that's reused when defining the project and
 // build configurations inside the project
 // For GitVcsRoot docs, see https://teamcity.jetbrains.com/app/dsl-documentation/vcs/git-vcs-root/index.html
-object providerRepository : GitVcsRoot({
+object ProviderRepository : GitVcsRoot({
     name = "terraform-provider-google-beta"
     url = "https://github.com/hashicorp/terraform-provider-google-beta.git"
     agentCleanPolicy = AgentCleanPolicy.ON_BRANCH_CHANGE

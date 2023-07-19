@@ -15,7 +15,7 @@ fun GoogleBeta(environment: String, branchRef: String, configuration : ClientCon
     ProviderRepository.param("branch", branchRef)
 
     return Project{
-        vcsRoot(providerRepository)
+        vcsRoot(ProviderRepository)
 
         var buildConfigs = buildConfigurationsForPackages(packages, providerName, "google-beta", environment, branchRef, configuration)
         buildConfigs.forEach { buildConfiguration ->
