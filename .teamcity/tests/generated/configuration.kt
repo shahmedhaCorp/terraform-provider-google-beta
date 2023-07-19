@@ -10,7 +10,7 @@ import useTeamCityGoTest
 class ConfigurationTests {
     @Test
     fun buildShouldFailOnError() {
-        val project = GoogleBeta("default", TestConfiguration())
+        val project = GoogleBeta("default", "refs/heads/main", TestConfiguration())
         project.buildTypes.forEach { bt ->
             assertTrue("Build '${bt.id}' should fail on errors!", bt.failureConditions.errorMessage)
         }
@@ -18,7 +18,7 @@ class ConfigurationTests {
 
     @Test
     fun buildShouldHaveGoTestFeature() {
-        val project = GoogleBeta("default", TestConfiguration())
+        val project = GoogleBeta("default", "refs/heads/main", TestConfiguration())
         project.buildTypes.forEach{ bt ->
             var exists = false
             bt.features.items.forEach { f ->
@@ -35,7 +35,7 @@ class ConfigurationTests {
 
     @Test
     fun buildShouldHaveTrigger() {
-        val project = GoogleBeta("default", TestConfiguration())
+        val project = GoogleBeta("default", "refs/heads/main", TestConfiguration())
         var exists = false
         project.buildTypes.forEach{ bt ->
             bt.triggers.items.forEach { t ->
