@@ -2,10 +2,8 @@
 
 package tests
 
-import jetbrains.buildServer.configs.kotlin.vcs.GitVcsRoot
-import jetbrains.buildServer.configs.kotlin.vcs.GitVcsRoot.AgentCleanPolicy.ON_BRANCH_CHANGE
-import jetbrains.buildServer.configs.kotlin.vcs.GitVcsRoot.AgentCleanFilesPolicy.ALL_UNTRACKED
 import jetbrains.buildServer.configs.kotlin.AbsoluteId
+
 import ClientConfiguration
 
 fun TestConfiguration() : ClientConfiguration {
