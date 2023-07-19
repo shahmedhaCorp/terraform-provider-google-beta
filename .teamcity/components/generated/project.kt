@@ -2,42 +2,39 @@
 
 import jetbrains.buildServer.configs.kotlin.BuildType
 import jetbrains.buildServer.configs.kotlin.Project
+import jetbrains.buildServer.configs.kotlin.VcsRoot
+import jetbrains.buildServer.configs.kotlin.AbsoluteId
 
 const val providerName = "google-beta"
 
 // GoogleBeta returns an instance of Project,
 // which has multiple build configurations defined within it.
 // See https://teamcity.jetbrains.com/app/dsl-documentation/root/project/index.html
-fun GoogleBeta(environment: String, branchRef: String, configuration : ClientConfiguration) : Project {
-
-    // Alter the `ProviderRepository` global object to use the branch we received via parameters. Default value is refs/heads/main.
-    // This is necessary to allow feature branch testing.
-    ProviderRepository.param("branch", branchRef)
+fun GoogleBeta(environment: String, branchRef: String, manualVcsRoot: AbsoluteId, configuration: ClientConfiguration) : Project {
 
     return Project{
-        vcsRoot(ProviderRepository)
 
-        var buildConfigs = buildConfigurationsForPackages(packages, providerName, "google-beta", environment, branchRef, configuration)
+        var buildConfigs = buildConfigurationsForPackages(packages, providerName, "google-beta", environment, branchRef, manualVcsRoot, configuration)
         buildConfigs.forEach { buildConfiguration ->
             buildType(buildConfiguration)
         }
     }
 }
 
-fun buildConfigurationsForPackages(packages: Map<String, String>, providerName : String, path : String, environment: String, branchRef: String, config : ClientConfiguration): List<BuildType> {
+fun buildConfigurationsForPackages(packages: Map<String, String>, providerName : String, path : String, environment: String, branchRef: String, manualVcsRoot: AbsoluteId, config: ClientConfiguration): List<BuildType> {
     var list = ArrayList<BuildType>()
 
     packages.forEach { (packageName, displayName) ->
         if (packageName == "services") {
             // `services` is a folder containing packages, not a package itself; call buildConfigurationsForPackages to iterate through directories found within `services`
-            var serviceList = buildConfigurationsForPackages(services, providerName, path+"/"+packageName, environment, branchRef, config)
+            var serviceList = buildConfigurationsForPackages(services, providerName, path+"/"+packageName, environment, branchRef, manualVcsRoot, config)
             list.addAll(serviceList)
         } else {
             // other folders assumed to be packages
             var testConfig = testConfiguration(environment)
 
             var pkg = packageDetails(packageName, displayName, environment, branchRef)
-            var buildConfig = pkg.buildConfiguration(providerName, path, true, testConfig.startHour, testConfig.parallelism, testConfig.daysOfWeek, testConfig.daysOfMonth)
+            var buildConfig = pkg.buildConfiguration(providerName, path, manualVcsRoot, true, testConfig.startHour, testConfig.parallelism, testConfig.daysOfWeek, testConfig.daysOfMonth)
 
             buildConfig.params.ConfigureGoogleSpecificTestParameters(config)
 
