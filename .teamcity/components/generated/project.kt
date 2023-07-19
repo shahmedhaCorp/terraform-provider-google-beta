@@ -30,7 +30,7 @@ fun buildConfigurationsForPackages(packages: Map<String, String>, providerName :
     packages.forEach { (packageName, displayName) ->
         if (packageName == "services") {
             // `services` is a folder containing packages, not a package itself; call buildConfigurationsForPackages to iterate through directories found within `services`
-            var serviceList = buildConfigurationsForPackages(services, providerName, path+"/"+packageName, environment, config)
+            var serviceList = buildConfigurationsForPackages(services, providerName, path+"/"+packageName, environment, branchRef, config)
             list.addAll(serviceList)
         } else {
             // other folders assumed to be packages
