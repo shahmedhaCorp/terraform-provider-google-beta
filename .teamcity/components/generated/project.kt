@@ -17,14 +17,14 @@ fun GoogleBeta(environment: String, branchRef: String, configuration : ClientCon
     return Project{
         vcsRoot(providerRepository)
 
-        var buildConfigs = buildConfigurationsForPackages(packages, providerName, "google-beta", environment, configuration)
+        var buildConfigs = buildConfigurationsForPackages(packages, providerName, "google-beta", environment, branchRef, configuration)
         buildConfigs.forEach { buildConfiguration ->
             buildType(buildConfiguration)
         }
     }
 }
 
-fun buildConfigurationsForPackages(packages: Map<String, String>, providerName : String, path : String, environment: String, config : ClientConfiguration): List<BuildType> {
+fun buildConfigurationsForPackages(packages: Map<String, String>, providerName : String, path : String, environment: String, branchRef: String, config : ClientConfiguration): List<BuildType> {
     var list = ArrayList<BuildType>()
 
     packages.forEach { (packageName, displayName) ->
@@ -36,7 +36,7 @@ fun buildConfigurationsForPackages(packages: Map<String, String>, providerName :
             // other folders assumed to be packages
             var testConfig = testConfiguration(environment)
 
-            var pkg = packageDetails(packageName, displayName, environment)
+            var pkg = packageDetails(packageName, displayName, environment, branchRef)
             var buildConfig = pkg.buildConfiguration(providerName, path, true, testConfig.startHour, testConfig.parallelism, testConfig.daysOfWeek, testConfig.daysOfMonth)
 
             buildConfig.params.ConfigureGoogleSpecificTestParameters(config)
