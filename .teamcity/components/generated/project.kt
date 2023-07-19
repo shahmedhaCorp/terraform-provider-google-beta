@@ -16,7 +16,7 @@ fun GoogleBeta(environment: String, manualVcsRoot: AbsoluteId, configuration: Cl
     }
 }
 
-fun buildConfigurationsForPackages(packages: Map<String, String>, providerName : String, path : String, environment: String, branchRef: String, manualVcsRoot: AbsoluteId, config: ClientConfiguration): List<BuildType> {
+fun buildConfigurationsForPackages(packages: Map<String, String>, providerName : String, path : String, environment: String, manualVcsRoot: AbsoluteId, config: ClientConfiguration): List<BuildType> {
     var list = ArrayList<BuildType>()
 
     packages.forEach { (packageName, displayName) ->
