@@ -797,6 +797,13 @@ func testAccCloudfunctions2function_cloudfunctions2CmekExample(context map[strin
 	return acctest.Nprintf(`
 locals {
   project = "%{project}" # Google Cloud Platform Project ID
+  gcf_cmek_keyusers = {
+    1 = "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com",
+    2 = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-artifactregistry.iam.gserviceaccount.com",
+    3 = "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com",
+    4 = "serviceAccount:service-${data.google_project.project.number}@serverless-robot-prod.iam.gserviceaccount.com",
+    5 = "serviceAccount:${google_project_service_identity.ea_sa.email}",
+  }
 }
 
 data "google_project" "project" {
@@ -845,19 +852,14 @@ resource "google_artifact_registry_repository_iam_binding" "binding" {
   ]
 }
 
-resource "google_kms_crypto_key_iam_binding" "gcf_cmek_keyuser" {
+resource "google_kms_crypto_key_iam_member" "gcf_cmek_keyuser" {
   provider = google-beta
+  for_each = local.gcf_cmek_keyusers
 
   crypto_key_id = "%{kms_key_name}"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  members = [
-    "serviceAccount:service-${data.google_project.project.number}@gcf-admin-robot.iam.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-artifactregistry.iam.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.project.number}@serverless-robot-prod.iam.gserviceaccount.com",
-    "serviceAccount:${google_project_service_identity.ea_sa.email}",
-  ]
+  member = each.value
 
   depends_on = [
     google_project_service_identity.ea_sa
@@ -872,7 +874,7 @@ resource "google_artifact_registry_repository" "encoded-ar-repo" {
   format = "DOCKER"
   kms_key_name = "%{kms_key_name}"
   depends_on = [
-    google_kms_crypto_key_iam_binding.gcf_cmek_keyuser
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser
   ]
 }
 
@@ -904,7 +906,7 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   depends_on = [
-    google_kms_crypto_key_iam_binding.gcf_cmek_keyuser
+    google_kms_crypto_key_iam_member.gcf_cmek_keyuser
   ]
 
 }
