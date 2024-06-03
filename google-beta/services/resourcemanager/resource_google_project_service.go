@@ -125,6 +125,11 @@ func ResourceGoogleProjectService() *schema.Resource {
 				Optional: true,
 				Default:  true,
 			},
+			"check_if_service_has_usage_on_destroy":{
+				Type:     schema.TypeBool,
+				Optional: false,
+				Default:  false,
+			}
 		},
 		UseJSONNumber: true,
 	}
@@ -284,6 +289,7 @@ func disableServiceUsageProjectService(service, project string, d *schema.Resour
 			name := fmt.Sprintf("projects/%s/services/%s", project, service)
 			servicesDisableCall := config.NewServiceUsageClient(userAgent).Services.Disable(name, &serviceusage.DisableServiceRequest{
 				DisableDependentServices: disableDependentServices,
+				check_if_service_has_usage: &serviceusage.DisableServiceRequest.CheckIfServiceHasUsage.SKIP 
 			})
 			if config.UserProjectOverride {
 				// err == nil indicates that the billing_project value was found
